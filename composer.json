@@ -1,6 +1,6 @@
 {
-    "name": "mvqn/ucrm-plugin-template",
-    "description": "A project template for developing UCRM Plugins.",
+    "name": "ucrm-plugins/client-registration",
+    "description": "A simple Client Registration Plugin for UCRM.",
     "license": "MIT",
     "authors": [
         {

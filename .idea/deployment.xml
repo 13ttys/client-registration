@@ -5,7 +5,7 @@
       <paths name="unms.mvqn.net">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/unms/data/ucrm/ucrm/data/plugins/ucrm-plugin-template\" local="$PROJECT_DIR$/src/" web="/_plugins/ucrm-plugin-template/" />
+            <mapping deploy="/home/unms/data/ucrm/ucrm/data/plugins/client-registration/" local="$PROJECT_DIR$/src/" web="/_plugins/client-registration/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/.idea" />

@@ -1,10 +1,10 @@
 {
     "version": "1",
     "information": {
-        "name": "ucrm-plugin-template",
-        "displayName": "Plugin Template",
-        "description": "A project template for developing UCRM Plugins.",
-        "url": "https://github.com/mvqn/ucrm-plugin-template",
+        "name": "client-registration",
+        "displayName": "Client Registration",
+        "description": "A simple Client Registration Plugin for UCRM.",
+        "url": "https://github.com/ucrm-plugins/client-registration",
         "version": "1.0.0",
         "ucrmVersionCompliancy": {
             "min": "2.16.4",
@@ -19,7 +19,7 @@
     "menu": [
         {
             "key": "Add-Ons",
-            "label": "Plugin Template",
+            "label": "Client Registration",
             "type": "admin",
             "target": "iframe"
         }
