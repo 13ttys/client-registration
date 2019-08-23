@@ -16,4 +16,4 @@ export default function(Vue, options = {})
     // ...
 }
 
-// TEST!
+// TEST1!
