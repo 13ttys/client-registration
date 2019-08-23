@@ -18,5 +18,3 @@ export default function(Vue, options)
 {
     Vue.use(api);
 }
-
-// TEST3!
