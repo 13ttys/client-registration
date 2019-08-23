@@ -231,7 +231,7 @@
 
 
                 this.request = $.ajax({
-                    url: "public.php?/api/psql/format",
+                    url: "public.php?/api/pgsql/format",
                     method: "POST",
                     data: query,
                     dataType: "text",
@@ -261,7 +261,7 @@
 
                 /*
                 this.request = $.ajax({
-                    url: "public.php?/api/psql/query",
+                    url: "public.php?/api/pgsql/query",
                     method: "POST",
                     data: query,
                     dataType: "text",
@@ -338,7 +338,7 @@
         },
 
         created() {
-            console.log("QueryBuilderDemo");
+            //console.log("QueryBuilderDemo");
         },
 
         mounted: function()
@@ -348,7 +348,7 @@
             this.tablesLoading = true;
 
             this.request = $.ajax({
-                url: "public.php?/api/psql/schemas",
+                url: "public.php?/api/pgsql/schemas",
                 method: "GET",
 
                 // Handle successful data acquisition...

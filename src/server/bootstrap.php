@@ -61,12 +61,13 @@ if (isset($_SERVER) && isset($_SERVER["REQUEST_URI"]))
 require_once __DIR__ . "/vendor/autoload.php";
 
 use App\Middleware\WebhookMiddleware;
-use Dotenv\Dotenv;
 use MVQN\Localization\Translator;
 use MVQN\Localization\Exceptions\TranslatorException;
 use MVQN\REST\RestClient;
 use MVQN\Twig\Extensions\SwitchExtension;
 
+use Slim\App;
+use Slim\Views\Twig;
 use UCRM\Common\Config;
 use UCRM\Common\Log;
 use UCRM\Common\Plugin;
@@ -108,22 +109,23 @@ Plugin::createSettings("App", "Settings", __DIR__);
 
 //#region REST Client
 
-// TODO: Move this into Plugin::initialize() ???
-
-// Generate the REST API URL from either an ENV variable (including from .env file), or fallback to localhost.
+// Create the REST URL from an ENV variable (including .env[.*] files), the Plugin Settings or fallback to localhost.
 $restUrl =
     rtrim(
-        getenv("HOST_URL") ?:                                                           // .env (or ENV variable)
+        getenv("HOST_URL") ?:                                                           // .env.local (or ENV variable)
         Settings::UCRM_LOCAL_URL ?:                                                     // ucrm.json
         (isset($_SERVER['HTTPS']) ? "https://localhost/" : "http://localhost/"),        // By initial request
-    "/")."/api/v1.0";
+    "/") . "/api/v1.0";
+    // NOTE: The "/crm" prefix is not necessary, as the UNMS system currently proxies the request to where it is needed!
 
 // Configure the REST Client...
 /** @noinspection PhpUnhandledExceptionInspection */
 RestClient::setBaseUrl($restUrl);
 RestClient::setHeaders([
+    // All returned values are currently in the "application/json" format.
     "Content-Type: application/json",
-    "X-Auth-App-Key: " . Settings::PLUGIN_APP_KEY
+    // Set the App Key from an ENV variable (including .env[.*] files) or from the Plugin Settings.
+    "X-Auth-App-Key: " . (getenv("REST_KEY") ?: Settings::PLUGIN_APP_KEY)
 ]);
 
 // Attempt to test the connection to the UCRM's REST API...
@@ -134,14 +136,12 @@ try
 
     /** @var Version $version */
     $version = Version::get();
-    //define("UCRM_VERSION",  $version->getVersion());
 
     Log::info("REST API Test : '".$version."'");
 }
-catch(\Exception $e)
+catch(Exception $e)
 {
     // We should have resolved all existing conditions that previously prevented successful connections!
-    /** @noinspection PhpUnhandledExceptionInspection */
     Log::error($e->getMessage());
 }
 
@@ -169,7 +169,7 @@ catch (TranslatorException $e)
 //#region Routing & Dependency Injection (Slim)
 
 // Create Slim Framework Application, given the provided settings.
-$app = new \Slim\App([
+$app = new App([
     "settings" => [
         "displayErrorDetails" => true,
         "addContentLengthHeader" => false,
@@ -188,7 +188,7 @@ $container = $app->getContainer();
 $container["twig"] = function (Container $container)
 {
     // Create a new instance of the Twig template renderer and configure the default options...
-    $twig = new \Slim\Views\Twig(
+    $twig = new Twig(
         [
             __DIR__ . "/App/Views/",
         ],
