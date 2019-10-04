@@ -26,7 +26,10 @@
 
         "commerceguys/intl": "^1.0",
         "mvqn/ucrm-plugin-sdk": "^1.3",
-        "mvqn/http": "^1.0"
+
+        "mvqn/common": "~1",
+        "mvqn/http": "~1"
+
 
 
     },
