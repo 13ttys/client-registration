@@ -1,6 +1,8 @@
 <?php /** @noinspection PhpUnused, PhpUndefinedClassInspection */
 declare(strict_types=1);
+require_once __DIR__."/src/server/vendor/autoload.php";
 
+use MVQN\Common\Directories;
 use Robo\Tasks;
 
 /**
@@ -124,6 +126,44 @@ class RoboFile extends Tasks
 
 
     #endregion
+
+
+    public function fixEOL(string $path, string $eol = "\n", bool $recursive = true)
+    {
+        $path = realpath($path);
+
+        $count = 0;
+
+        //foreach($this->scanDirMap($path, function($rel) use ($path) { return $path . DIRECTORY_SEPARATOR . $rel; }) as $file)
+        foreach(Directories::scanDir($path) as $file)
+        {
+            $contents = file_get_contents($file);
+
+            if(strpos($contents, "\r\n") !== false)
+            {
+                //echo "[Y] ";
+                echo "$file\n";
+            }
+            else
+            {
+                //echo "[N] ";
+            }
+
+
+            //echo "$file\n";
+
+
+
+
+
+            $count++;
+        }
+
+        echo $count."\n";
+
+
+
+    }
 
 
 }
