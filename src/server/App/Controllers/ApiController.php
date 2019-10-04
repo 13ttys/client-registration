@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use Dotenv\Dotenv;
 use Monolog\Logger;
+use MVQN\HTTP\Slim\Routes\BuiltInRoute;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -19,7 +21,7 @@ use UCRM\Common\Plugin;
  * @author Ryan Spaeth <rspaeth@mvqn.net>
  * @final
  */
-final class ApiController
+final class ApiController extends BuiltInRoute
 {
     /**
      * ApiController constructor.
@@ -29,7 +31,7 @@ final class ApiController
     public function __construct(App $app)
     {
 
-        $app->group("/api", function() use ($app) {
+        $this->route = $app->group("/api", function() use ($app) {
 
             // Get a local reference to the Slim Application's DI Container.
             $container = $app->getContainer();
@@ -45,33 +47,21 @@ final class ApiController
             // NOTE: Include any additional common API Controllers here...
             //
 
-            /*
-            $app->get("/environment",
+
+
+            $app->get("/plugin",
 
                 function (Request $request, Response $response, array $args) use ($container)
                 {
                     $data = [
-                        "mode" => Plugin::environment(),
-                        //"ucrm" => json_decode(file_get_contents(__DIR__ . "/../../../ucrm.json", true)),
+                        "mode" => Plugin::mode(),
+                        // NOTE: Add additional Plugin metadata here...
                     ];
 
                     return $response->withJson($data);
                 }
             );
-            */
 
-            $app->get("/environment",
-
-                function (Request $request, Response $response, array $args) use ($container)
-                {
-                    $data = [
-                        "mode" => Plugin::environment(),
-                        //"ucrm" => json_decode(file_get_contents(__DIR__ . "/../../../ucrm.json", true)),
-                    ];
-
-                    return $response->withJson($data);
-                }
-            );
 
 
             // Handle the root "/api[/]" functionality here...
@@ -120,10 +110,24 @@ final class ApiController
                 }
             );
 
-        })->add(function (Request $request, Response $response, $next) use ($app) {
-            Log::debug($request->getUri()->getPath(), Log::REST);
-            return $next($request, $response);
-        });
+        })->add(
+            function (Request $request, Response $response, $next)
+            use ($app)
+            {
+                if(Plugin::mode() === Plugin::MODE_DEVELOPMENT)
+                {
+                    $path = $request->getUri()
+                        ->getPath();
+                    $query = $request->getUri()
+                        ->getQuery();
+
+                    $message = $path.($query !== "" ? "?$query" : "");
+                    Log::debug($message, Log::REST);
+                }
+
+                return $next($request, $response);
+            }
+        );
 
     }
 

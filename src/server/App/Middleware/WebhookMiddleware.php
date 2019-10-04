@@ -7,6 +7,7 @@ use Exception;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use UCRM\Common\Log;
 use UCRM\REST\Endpoints\WebhookEvent;
 
 /**
@@ -18,22 +19,6 @@ use UCRM\REST\Endpoints\WebhookEvent;
  */
 class WebhookMiddleware
 {
-    /**
-     * @var App|null The Slim Framework Application.
-     */
-    private $app = null;
-
-    /**
-     * Middleware Constructor.
-     *
-     * @param App $app The Slim Framework Application to which this Middleware belongs.
-     */
-    public function __construct(App $app)
-    {
-        // Assign local variables to instance properties, as needed...
-        $this->app = $app;
-    }
-
     /**
      * Middleware Invocation method.
      *
@@ -52,6 +37,17 @@ class WebhookMiddleware
             // ...THEN get the request body JSON object as an associative array.
             $body = $request->getParsedBody();
             //$body = $request->getBody()->getContents();
+
+            Log::debug(
+                "Webhook Event",
+                Log::HTTP,
+                [
+                    //"route" => $request->getAttribute("vRoute"),
+                    //"query" => $request->getAttribute("vQuery"),
+                    //"user" => $request->getAttribute("sessionUser"),
+                    "body" => $body,
+                ]
+            );
 
             // IF NULL, either the body was empty or could not be parsed into JSON.
             if(!$body)
